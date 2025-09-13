@@ -1,27 +1,22 @@
-// server.js
 import express from 'express';
 import fetch from 'node-fetch';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import dotenv from 'dotenv'; // 1. IMPORTA O PACOTE DOTENV
+import dotenv from 'dotenv';
 
-dotenv.config(); // 2. EXECUTA A CONFIGURAÇÃO PARA CARREGAR O ARQUIVO .ENV
+dotenv.config();
 
 const app = express();
-const PORT = 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
 
-// 3. LÊ A CHAVE DE API A PARTIR DAS VARIÁVEIS DE AMBIENTE CARREGADAS
 const ASAAS_API_KEY = process.env.ASAAS_API_KEY; 
 const ASAAS_URL = 'https://www.asaas.com/api/v3';
 
-// Verifica se a chave de API foi carregada corretamente
 if (!ASAAS_API_KEY) {
   console.error("ERRO CRÍTICO: A variável de ambiente ASAAS_API_KEY não foi encontrada.");
-  console.error("Verifique se você criou um arquivo .env na raiz do projeto com o conteúdo: ASAAS_API_KEY=sua_chave_aqui");
-  process.exit(1); // Encerra o servidor se a chave não existir
+  process.exit(1);
 }
 
 const asaasAPI = async (endpoint, method = 'GET', body = null) => {
@@ -32,9 +27,7 @@ const asaasAPI = async (endpoint, method = 'GET', body = null) => {
       'access_token': ASAAS_API_KEY
     }
   };
-  if (body) {
-    options.body = JSON.stringify(body);
-  }
+  if (body) options.body = JSON.stringify(body);
   return fetch(`${ASAAS_URL}${endpoint}`, options);
 };
 
@@ -118,7 +111,7 @@ app.post('/api/create-payment', async (req, res) => {
       console.log('RESPOSTA DA BUSCA PELO QR CODE:', JSON.stringify(qrCodeData, null, 2));
       
       if (!getQrCodeResponse.ok) {
-          return res.status(400).json({ error: 'Pagamento criado, mas falha ao obter QR Code', details: qrCodeData.errors });
+        return res.status(400).json({ error: 'Pagamento criado, mas falha ao obter QR Code', details: qrCodeData.errors });
       }
 
       const fullPaymentData = { ...paymentData, pixQrCode: qrCodeData };
@@ -133,7 +126,4 @@ app.post('/api/create-payment', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-  console.log(`Aguardando requisições do frontend em http://localhost:${PORT}`);
-});
+export default app;
