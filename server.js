@@ -19,13 +19,22 @@ const PORT = 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// === SERVIR ARQUIVOS ESTÁTICOS (CSS) ===
+// === SERVIR ARQUIVOS ESTÁTICOS ===
 app.use('/css', express.static(path.join(__dirname, 'css')));
+app.use('/js', express.static(path.join(__dirname, 'js')));
+app.use('/img', express.static(path.join(__dirname, 'img')));
 
-// === ROTA PARA O INDEX.HTML NA RAIZ ===
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
+// === ROTAS PARA AS PÁGINAS PRINCIPAIS ===
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/cadastro', (req, res) => res.sendFile(path.join(__dirname, 'cadastro.html')));
+app.get('/cardapio', (req, res) => res.sendFile(path.join(__dirname, 'cardapio.html')));
+app.get('/carrinho', (req, res) => res.sendFile(path.join(__dirname, 'carrinho.html')));
+app.get('/cupom', (req, res) => res.sendFile(path.join(__dirname, 'cupom.html')));
+app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
+app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
+app.get('/pagamentos', (req, res) => res.sendFile(path.join(__dirname, 'pagamentos.html')));
+app.get('/perfil', (req, res) => res.sendFile(path.join(__dirname, 'perfil.html')));
+app.get('/redefinir-senha', (req, res) => res.sendFile(path.join(__dirname, 'redefinir-senha.html')));
 
 // ========================
 // CONFIGURAÇÃO ASAAS
@@ -33,7 +42,6 @@ app.get('/', (req, res) => {
 const ASAAS_API_KEY = process.env.ASAAS_API_KEY; 
 const ASAAS_URL = 'https://www.asaas.com/api/v3';
 
-// Verifica se a chave de API foi carregada corretamente
 if (!ASAAS_API_KEY) {
   console.error("ERRO CRÍTICO: A variável de ambiente ASAAS_API_KEY não foi encontrada.");
   console.error("Verifique se você criou um arquivo .env na raiz do projeto com o conteúdo: ASAAS_API_KEY=sua_chave_aqui");
@@ -68,7 +76,6 @@ app.post('/api/create-payment', async (req, res) => {
     const cleanCpf = userData.cpf.replace(/\D/g, '');
     let customerId;
 
-    // Verifica se cliente já existe
     const findCustomerResponse = await asaasAPI(`/customers?cpfCnpj=${cleanCpf}`);
     const findCustomerData = await findCustomerResponse.json();
 
@@ -94,7 +101,6 @@ app.post('/api/create-payment', async (req, res) => {
       customerId = createCustomerData.id;
     }
 
-    // Monta payload do pagamento
     const paymentPayload = {
       customer: customerId,
       billingType: paymentMethod.toUpperCase(),
@@ -103,7 +109,6 @@ app.post('/api/create-payment', async (req, res) => {
       description: `Pedido na Pizzaria Moraes para ${userData.nome}`,
     };
 
-    // Se for cartão, adiciona dados
     if (paymentMethod.toUpperCase().includes('CARD')) {
       if (!cardData) return res.status(400).json({ error: 'Dados do cartão não fornecidos.' });
       paymentPayload.creditCard = {
@@ -123,7 +128,6 @@ app.post('/api/create-payment', async (req, res) => {
       };
     }
 
-    // Cria o pagamento
     const paymentResponse = await asaasAPI('/payments', 'POST', paymentPayload);
     const paymentData = await paymentResponse.json();
 
@@ -134,7 +138,6 @@ app.post('/api/create-payment', async (req, res) => {
       return res.status(400).json({ error: 'Erro ao criar pagamento', details: paymentData.errors });
     }
     
-    // Se for PIX, busca QRCode
     if (paymentData.billingType === 'PIX' && paymentData.id) {
       console.log(`Pagamento PIX criado com ID: ${paymentData.id}. Buscando detalhes e QR Code...`);
       const getQrCodeResponse = await asaasAPI(`/payments/${paymentData.id}/pixQrCode`);
