@@ -5,7 +5,8 @@ import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/fir
 import { updateCartBadge } from './main.js';
 
 // URL do seu servidor backend que se comunica com o Asaas
-const BACKEND_URL = 'http://localhost:3000';
+// Alterado para um caminho relativo para funcionar em qualquer ambiente (local ou nuvem).
+const BACKEND_URL = '';
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Seletores do DOM ---
@@ -166,7 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     
         try {
-            const response = await fetch(`${BACKEND_URL}/api/create-payment`, {
+            // A chamada agora usa um caminho relativo
+            const response = await fetch(`/api/create-payment`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
