@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <!-- Metadados Essenciais -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Gerencie seu perfil e veja seu histórico de pedidos na Pizzaria Moraes.">
+    
+    <!-- Título da Página -->
+    <title>Meu Perfil - Pizzaria Moraes</title>
+
+    <!-- Ícone da Página (Favicon) -->
+    <link rel="icon" href="img/desenho-pizza.png" type="image/png">
+
+    <!-- Link para o arquivo de estilos CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Link para a biblioteca de ícones do Google (Material Icons) -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Pré-carregamento da fonte do Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="app-page">
+
+    <!-- Cabeçalho da página -->
+    <header class="app-header-simple">
+        <h1>Meu Perfil</h1>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="container">
+        
+        <!-- Seção de informações do perfil -->
+        <section class="profile-header">
+            <img src="img/desenho-pizza.png" alt="Foto do Perfil" class="profile-picture">
+            <h2 id="profile-user-name">Carregando...</h2>
+        </section>
+
+        <!-- Formulário com os dados do usuário -->
+        <form id="profile-form">
+            <div class="form-group">
+                <label for="profile-nome">Nome Completo</label>
+                <input type="text" id="profile-nome" readonly>
+            </div>
+            <div class="form-group">
+                <label for="profile-email">Email</label>
+                <input type="email" id="profile-email" readonly>
+            </div>
+            <div class="form-group">
+                <label for="profile-telefone">Telefone</label>
+                <input type="tel" id="profile-telefone" readonly>
+            </div>
+            <div class="form-group">
+                <label for="profile-cpf">CPF</label>
+                <input type="text" id="profile-cpf" readonly>
+            </div>
+            <div class="form-group">
+                <label for="profile-nascimento">Data de Nascimento</label>
+                <input type="text" id="profile-nascimento" readonly>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="profile-actions">
+                <button type="button" id="edit-profile-btn" class="btn btn-secondary">Editar Perfil</button>
+                <button type="submit" id="save-profile-btn" class="btn btn-primary" style="display: none;">Salvar Alterações</button>
+            </div>
+        </form>
+
+        <hr class="section-divider">
+
+        <!-- Seção de Histórico de Pedidos -->
+        <section class="order-history">
+            <h2>Histórico de Pedidos</h2>
+            <div id="order-history-list">
+                <!-- O JavaScript irá gerar os cards de pedido aqui. Exemplo de estrutura:
+                <div class="order-history-card">
+                    <div class="order-summary">
+                        <div class="order-info"> ... </div>
+                        <div class="order-total"> ... </div>
+                        <i class="material-icons toggle-details-icon">expand_more</i>
+                    </div>
+                    <div class="order-details-content">
+                        <h4>Itens do Pedido:</h4>
+                        <ul>
+                            <li>2x Pizza Calabresa</li>
+                            <li>1x Coca-Cola 2L</li>
+                        </ul>
+                        <button class="reorder-btn">Pedir Novamente</button>
+                    </div>
+                </div>
+                -->
+                <p>Buscando seu histórico...</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Barra de Navegação Inferior Fixa -->
+    <nav class="bottom-nav">
+        <a href="cardapio.html" class="nav-item">
+            <i class="material-icons">restaurant_menu</i>
+            <span>Cardápio</span>
+        </a>
+        <a href="carrinho.html" class="nav-item">
+            <i class="material-icons">shopping_cart</i>
+            <span>Carrinho</span>
+            <span class="cart-notification-badge" id="cart-badge"></span>
+        </a>
+        <a href="cupom.html" class="nav-item">
+            <i class="material-icons">celebration</i>
+            <span>Cupom</span>
+        </a>
+        <a href="perfil.html" class="nav-item active">
+            <i class="material-icons">person</i>
+            <span>Perfil</span>
+        </a>
+        <a href="index.html" class="nav-item" id="logout-btn">
+            <i class="material-icons">logout</i>
+            <span>Sair</span>
+        </a>
+    </nav>
+    
+    <!-- Script da lógica do perfil -->
+    <script type="module" src="js/perfil.js"></script>
+
+    <!-- Script principal para funções globais como o "ouvinte" de notificação de status -->
+    <script type="module" src="js/main.js"></script>
+
+</body>
+</html>
