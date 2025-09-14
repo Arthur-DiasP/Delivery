@@ -163,7 +163,7 @@ input, button, select, textarea {
 /* ==================================================================== */
 .bottom-nav {
     position: fixed;
-    bottom: 1rem; /* Margem inferior para "flutuar" */
+    bottom: 2rem; /* AUMENTADO: Mais margem inferior para "flutuar" mais alto */
     left: 50%;
     transform: translateX(-50%); /* Centraliza horizontalmente */
     width: calc(100% - 2rem); /* Largura com margens laterais */
@@ -795,8 +795,8 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
 /* ============================================= */
 .finalize-order-button-container {
     position: fixed;
-    /* ATUALIZAÇÃO: Posição ajustada para ficar acima do novo navbar */
-    bottom: calc(var(--nav-height) + 1.5rem); 
+    /* ATUALIZAÇÃO: Posição recalculada para ficar acima do novo navbar */
+    bottom: calc(2rem + var(--nav-height) + 0.5rem);
     left: 0;
     width: 100%;
     padding: 1rem;
@@ -814,8 +814,8 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
 /* ============================================= */
 .add-to-cart-toast {
     position: fixed;
-    /* ATUALIZAÇÃO: Posição ajustada para ficar acima do novo navbar e do botão de finalizar */
-    bottom: calc(var(--nav-height) + 2.5rem);
+    /* ATUALIZAÇÃO: Posição recalculada para ficar acima do novo navbar */
+    bottom: calc(2rem + var(--nav-height) + 1rem);
     left: 50%;
     transform: translateX(-50%) translateY(200%);
     background-color: var(--secondary-color);
