@@ -157,15 +157,31 @@ input, button, select, textarea {
     color: var(--text-color); background: none; cursor: pointer; 
 }
 
-.bottom-nav { 
-    position: fixed; bottom: 0; left: 0; width: 100%; 
+
+/* ==================================================================== */
+/*  INÍCIO DA ATUALIZAÇÃO: Navbar Flutuante e Atraente                  */
+/* ==================================================================== */
+.bottom-nav {
+    position: fixed;
+    bottom: 1rem; /* Margem inferior para "flutuar" */
+    left: 50%;
+    transform: translateX(-50%); /* Centraliza horizontalmente */
+    width: calc(100% - 2rem); /* Largura com margens laterais */
+    max-width: 450px; /* Largura máxima em telas maiores */
     height: var(--nav-height);
-    background-color: var(--surface-color); 
-    display: flex; justify-content: space-around; 
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); 
-    border-top: 1px solid var(--border-color); 
-    z-index: 100; 
+    background-color: var(--surface-color);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 50px; /* Cantos super arredondados (formato pílula) */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Sombra mais pronunciada e moderna */
+    z-index: 100;
+    border: 1px solid var(--border-color); /* Borda sutil para melhor definição */
 }
+/* ==================================================================== */
+/*  FIM DA ATUALIZAÇÃO                                                  */
+/* ==================================================================== */
+
 .nav-item { 
     position: relative; display: flex; flex-direction: column; 
     align-items: center; justify-content: center; 
@@ -401,17 +417,17 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
 .pix-copy-paste button { border: 1px solid var(--border-color); background-color: #f0f0f0; padding: 0 0.75rem; cursor: pointer; border-radius: 0 8px 8px 0; }
 
 /* ==================================================================== */
-/*  INÍCIO DA ATUALIZAÇÃO: Modal de Confirmação com Imagem da Pizza     */
+/*  Modal de Confirmação com Imagem da Pizza (Mantido)                  */
 /* ==================================================================== */
 .confirmation-modal-content {
     background-color: var(--surface-color);
     border-radius: 20px;
-    padding: 0; /* Remove padding para o cabeçalho colorido ocupar tudo */
+    padding: 0;
     width: 90%;
     max-width: 400px;
     text-align: center;
     box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-    overflow: hidden; /* Essencial para os cantos arredondados do header */
+    overflow: hidden;
     transform: scale(0.9);
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -421,7 +437,7 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
 }
 
 .confirmation-header {
-    background-color: var(--primary-color); /* Alterado para a cor primária */
+    background-color: var(--primary-color);
     padding: 2.5rem 1rem 3.5rem 1rem;
     position: relative;
 }
@@ -434,15 +450,12 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
     background-color: #fff;
     border-radius: 50%;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    
-    /* Aplicando a imagem da pizza */
-    background-image: url('../img/desenho-pizza.png'); /* Caminho relativo da pasta css para a pasta img */
-    background-size: 60%; /* Ajuste o tamanho da imagem dentro do círculo */
+    background-image: url('../img/desenho-pizza.png');
+    background-size: 60%;
     background-position: center;
     background-repeat: no-repeat;
 }
 
-/* Animação para a pizza aparecer "pulando" */
 #confirmation-overlay.visible .confirmation-icon {
     animation: pizza-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
 }
@@ -479,18 +492,12 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
     width: 100%;
     padding: 1rem;
     font-size: 1.1rem;
-}
-
-/* Mantendo o botão com a cor de ação principal */
-.confirmation-body .btn {
     background-color: var(--accent-color);
 }
+
 .confirmation-body .btn:hover {
     background-color: #b71c1f;
 }
-/* ==================================================================== */
-/*  FIM DA ATUALIZAÇÃO                                                  */
-/* ==================================================================== */
 
 
 /* ============================================= */
@@ -786,7 +793,18 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
 /* ============================================= */
 /*       20. BOTÃO FLUTUANTE DE FINALIZAR         */
 /* ============================================= */
-.finalize-order-button-container { position: fixed; bottom: var(--nav-height); left: 0; width: 100%; padding: 1rem; z-index: 99; display: flex; justify-content: center; pointer-events: none; }
+.finalize-order-button-container {
+    position: fixed;
+    /* ATUALIZAÇÃO: Posição ajustada para ficar acima do novo navbar */
+    bottom: calc(var(--nav-height) + 1.5rem); 
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    z-index: 99;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+}
 .finalize-order-btn { display: flex; align-items: center; justify-content: center; gap: 0.75rem; width: 100%; max-width: 400px; padding: 1rem; font-size: 1.1rem; font-weight: 700; border-radius: 50px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); text-transform: uppercase; letter-spacing: 1px; pointer-events: auto; transform: translateY(150%); opacity: 0; visibility: hidden; transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.3s ease, visibility 0s 0.4s; }
 .finalize-order-button-container.visible .finalize-order-btn { transform: translateY(0); opacity: 1; visibility: visible; transition: transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.3s ease; }
 .finalize-order-btn .material-icons { font-size: 1.5rem; }
@@ -794,7 +812,26 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
 /* ============================================= */
 /*       21. NOTIFICAÇÃO "TOAST" (CARDÁPIO)       */
 /* ============================================= */
-.add-to-cart-toast { position: fixed; bottom: calc(var(--nav-height) + 2rem); left: 50%; transform: translateX(-50%) translateY(200%); background-color: var(--secondary-color); color: #fff; padding: 1rem 1.5rem; border-radius: 50px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 0.75rem; z-index: 1002; font-weight: 500; opacity: 0; visibility: hidden; transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+.add-to-cart-toast {
+    position: fixed;
+    /* ATUALIZAÇÃO: Posição ajustada para ficar acima do novo navbar e do botão de finalizar */
+    bottom: calc(var(--nav-height) + 2.5rem);
+    left: 50%;
+    transform: translateX(-50%) translateY(200%);
+    background-color: var(--secondary-color);
+    color: #fff;
+    padding: 1rem 1.5rem;
+    border-radius: 50px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 1002;
+    font-weight: 500;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
 .add-to-cart-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; visibility: visible; }
 .add-to-cart-toast .material-icons { color: #4CAF50; font-size: 1.5rem; }
 
