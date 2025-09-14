@@ -159,28 +159,25 @@ input, button, select, textarea {
 
 
 /* ==================================================================== */
-/*  INÍCIO DA ATUALIZAÇÃO: Navbar Flutuante e Atraente                  */
+/*  Navbar Flutuante e Atraente (Mantido)                               */
 /* ==================================================================== */
 .bottom-nav {
     position: fixed;
-    bottom: 2rem; /* AUMENTADO: Mais margem inferior para "flutuar" mais alto */
+    bottom: 2rem;
     left: 50%;
-    transform: translateX(-50%); /* Centraliza horizontalmente */
-    width: calc(100% - 2rem); /* Largura com margens laterais */
-    max-width: 450px; /* Largura máxima em telas maiores */
+    transform: translateX(-50%);
+    width: calc(100% - 2rem);
+    max-width: 450px;
     height: var(--nav-height);
     background-color: var(--surface-color);
     display: flex;
     justify-content: space-around;
     align-items: center;
-    border-radius: 50px; /* Cantos super arredondados (formato pílula) */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* Sombra mais pronunciada e moderna */
+    border-radius: 50px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     z-index: 100;
-    border: 1px solid var(--border-color); /* Borda sutil para melhor definição */
+    border: 1px solid var(--border-color);
 }
-/* ==================================================================== */
-/*  FIM DA ATUALIZAÇÃO                                                  */
-/* ==================================================================== */
 
 .nav-item { 
     position: relative; display: flex; flex-direction: column; 
@@ -206,12 +203,40 @@ input, button, select, textarea {
 /* ============================================= */
 /*       4. ESTILOS DE PÁGINAS ESPECÍFICAS       */
 /* ============================================= */
-/* --- Splash Screen --- */
-.splash-screen { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; background-color: var(--primary-color); }
-.splash-content { flex-grow: 1; display: flex; align-items: center; }
-.splash-image { width: 150px; animation: pulsate 2s infinite ease-in-out; }
-.splash-screen footer p { color: var(--surface-color); font-weight: 600; letter-spacing: 4px; padding-bottom: 2rem; }
+
+/* ==================================================================== */
+/*  Melhorias na Splash Screen (Mantido)                                */
+/* ==================================================================== */
+.splash-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: var(--primary-color);
+    overflow: hidden;
+}
+
+.splash-content {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+}
+
+.splash-image {
+    width: 150px;
+    animation: pulsate 2s infinite ease-in-out;
+}
+
+.splash-screen footer p {
+    color: var(--surface-color);
+    font-weight: 600;
+    letter-spacing: 4px;
+    padding-bottom: 10vh;
+}
+
 @keyframes pulsate { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
 
 /* --- Login e Cadastro --- */
 .login-page { display: flex; flex-direction: column; height: 100vh; }
@@ -223,7 +248,7 @@ input, button, select, textarea {
 .form-subtitle { text-align: center; color: var(--text-muted-color); margin-top: -1rem; margin-bottom: 1.5rem; }
 
 /* ========================================================================= */
-/*  ATUALIZAÇÃO APLICADA AQUI: Espaçamento para os links de formulário       */
+/*  Espaçamento para os links de formulário (Mantido)                        */
 /* ========================================================================= */
 .form-link {
     text-align: center;
@@ -304,7 +329,7 @@ input, button, select, textarea {
 @keyframes shake { 0%, 100% { transform: translateX(0) rotateY(180deg); } 25% { transform: translateX(-5px) rotateY(180deg); } 75% { transform: translateX(5px) rotateY(180deg); } }
 
 /* ========================================================================= */
-/*  ATUALIZAÇÃO: Estilos mais atraentes para o cupom no modal do jogo        */
+/*  Estilos para o cupom no modal do jogo (Mantido)                          */
 /* ========================================================================= */
 .game-modal #modal-coupon-area { margin-top: 2rem; }
 .coupon-code-display {
@@ -363,14 +388,33 @@ input, button, select, textarea {
     opacity: 1; visibility: visible; transition: opacity 0.3s ease; 
 }
 
-.customization-modal-content,
+/* ==================================================================== */
+/*  INÍCIO DA ATUALIZAÇÃO: Redesenho do Modal de Personalização         */
+/* ==================================================================== */
+
+.customization-modal-overlay { align-items: center; padding: 1rem; }
+.customization-modal-content {
+    background-color: var(--surface-color);
+    border-radius: 16px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative; /* Adicionado para o botão fechar */
+}
+.customization-modal-overlay.visible .customization-modal-content { transform: scale(1); }
+
+/* Conteúdo geral e botão fechar */
 .payment-modal-content, .game-modal { 
     background-color: var(--surface-color); padding: 1.5rem; 
     border-radius: 16px; box-shadow: 0 5px 25px rgba(0,0,0,0.2); 
     width: 90%; max-width: 450px; position: relative; 
     transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); 
 }
-.customization-modal-overlay.visible .customization-modal-content,
 .payment-modal-overlay.visible .payment-modal-content, .game-overlay.visible .game-modal { 
     transform: scale(1); 
 }
@@ -381,18 +425,73 @@ input, button, select, textarea {
     display: flex; align-items: center; justify-content: center; line-height: 1; 
 }
 
-/* Modal de Personalização */
-.customization-modal-overlay { align-items: flex-end; }
-.customization-modal-content { border-radius: 16px 16px 0 0; max-height: 90vh; display: flex; flex-direction: column; }
-.modal-product-header { display: flex; gap: 1rem; align-items: center; }
+/* Seções do modal de personalização */
+.modal-product-header {
+    padding: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
 .modal-product-header img { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; }
-.modal-options-container { padding-top: 1rem; margin-top: 1rem; border-top: 1px solid var(--border-color); flex-grow: 1; overflow-y: auto; }
-.modal-options-container h3 { font-size: 1.1rem; margin: 1rem 0; }
-.checkbox-label { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--background-color); border-radius: 8px; margin-bottom: 0.5rem; cursor: pointer; }
-.checkbox-label span { color: #2e7d32; font-weight: 500; }
-.modal-footer { padding-top: 1rem; margin-top: 1rem; border-top: 1px solid var(--border-color); display: flex; gap: 1rem; align-items: center; }
-.quantity-selector { display: flex; align-items: center; gap: 1rem; }
-#modal-add-to-cart-btn { flex-grow: 1; display: flex; justify-content: space-between; }
+#modal-product-name { font-size: 1.5rem; }
+
+.modal-options-container {
+    padding: 1.5rem;
+    flex-grow: 1;
+    overflow-y: auto;
+    border-top: none;
+    margin-top: 0;
+}
+.modal-options-container h3 { padding: 0 0.5rem; margin-bottom: 0.75rem; color: var(--text-muted-color); font-size: 1rem; }
+.modal-options-container .checkbox-label { display: flex; justify-content: space-between; align-items: center; padding: 1rem; background-color: var(--background-color); border: 2px solid var(--background-color); border-radius: 12px; margin-bottom: 0.75rem; cursor: pointer; transition: all 0.2s ease-in-out; }
+.modal-options-container .checkbox-label:hover { border-color: #ddd; }
+.modal-options-container input[type="checkbox"] { display: none; }
+.modal-options-container .checkbox-label:has(input[type="checkbox"]:checked) { border-color: var(--primary-color); background-color: #fff8e1; box-shadow: 0 0 10px rgba(255, 184, 0, 0.4); font-weight: 600; }
+
+.modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--surface-color);
+    flex-shrink: 0;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* Reduzido o espaço entre os elementos */
+    justify-content: flex-start; /* Alinha tudo à esquerda */
+}
+
+#modal-add-to-cart-btn {
+    flex-grow: 0; /* Impede o botão de esticar */
+    width: auto; /* Anula o 'width: 100%' da classe .btn-block */
+    padding: 0.8rem 1.2rem; /* Acolchoamento ligeiramente reduzido para um botão mais compacto */
+    font-size: 1rem; /* Tamanho da fonte normalizado */
+    white-space: nowrap; /* Garante que o texto não quebre a linha */
+    display: flex; /* Mantém o display flex para o span interno */
+    gap: 0.5rem; /* Adiciona espaço entre "Adicionar" e o preço */
+}
+
+#modal-final-price { font-weight: 700; }
+
+.modal-footer .quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* Espaçamento entre os botões +/- e o número */
+}
+
+.modal-footer .quantity-selector .quantity-btn {
+    width: 40px; height: 40px; border-radius: 50%; background-color: #f0f0f0; color: var(--accent-color);
+    font-size: 1.8rem; font-weight: 300; line-height: 1; border: 1px solid var(--border-color);
+    display: flex; align-items: center; justify-content: center;
+    transition: background-color 0.2s, transform 0.1s;
+}
+.modal-footer .quantity-selector .quantity-btn:hover { background-color: #e0e0e0; }
+.modal-footer .quantity-selector .quantity-btn:active { transform: scale(0.95); }
+/* ==================================================================== */
+/*  FIM DA ATUALIZAÇÃO                                                  */
+/* ==================================================================== */
 
 
 /* Modais de Pagamento e Confirmação */
@@ -561,7 +660,7 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
 /* ============================================= */
 
 /* ========================================================================= */
-/*  ATUALIZAÇÃO: Estilos para a seção de campanhas "Jogue e Ganhe"           */
+/*  Estilos para a seção de campanhas "Jogue e Ganhe" (Mantido)              */
 /* ========================================================================= */
 .scratch-section {
     padding: 1rem 0;
@@ -769,26 +868,6 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
 .login-main.full-page-form { height: auto; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 3rem 1rem; }
 .login-main.full-page-form .login-container { position: static; transform: none; top: auto; margin: 0; max-width: 450px; }
 
-/* ============================================= */
-/*  17. REDESENHO DO MODAL DE PERSONALIZAÇÃO      */
-/* ============================================= */
-.customization-modal-overlay { align-items: center; padding: 1rem; }
-.customization-modal-content { border-radius: 16px; max-height: 90vh; display: flex; flex-direction: column; width: 100%; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.customization-modal-overlay.visible .customization-modal-content { transform: scale(1); }
-.modal-product-header { padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
-#modal-product-name { font-size: 1.5rem; }
-.modal-options-container { flex-grow: 1; overflow-y: auto; padding: 1rem 0.5rem; border-top: none; margin-top: 0; }
-.modal-options-container h3 { padding: 0 0.5rem; margin-bottom: 0.75rem; color: var(--text-muted-color); font-size: 1rem; }
-.modal-options-container .checkbox-label { display: flex; justify-content: space-between; align-items: center; padding: 1rem; background-color: var(--background-color); border: 2px solid var(--background-color); border-radius: 12px; margin-bottom: 0.75rem; cursor: pointer; transition: all 0.2s ease-in-out; }
-.modal-options-container .checkbox-label:hover { border-color: #ddd; }
-.modal-options-container input[type="checkbox"] { display: none; }
-.modal-options-container .checkbox-label:has(input[type="checkbox"]:checked) { border-color: var(--primary-color); background-color: #fff8e1; box-shadow: 0 0 10px rgba(255, 184, 0, 0.4); font-weight: 600; }
-.modal-footer { padding: 1.5rem; border-top: 1px solid var(--border-color); background-color: var(--surface-color); flex-shrink: 0; margin-top: 0; }
-#modal-add-to-cart-btn { padding: 1rem; font-size: 1.1rem; }
-#modal-final-price { font-weight: 700; }
-.modal-footer .quantity-selector .quantity-btn { width: 40px; height: 40px; border-radius: 50%; background-color: #f0f0f0; color: var(--accent-color); font-size: 1.8rem; font-weight: 300; line-height: 1; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; transition: background-color 0.2s, transform 0.1s; }
-.modal-footer .quantity-selector .quantity-btn:hover { background-color: #e0e0e0; }
-.modal-footer .quantity-selector .quantity-btn:active { transform: scale(0.95); }
 
 /* ============================================= */
 /*       20. BOTÃO FLUTUANTE DE FINALIZAR         */
