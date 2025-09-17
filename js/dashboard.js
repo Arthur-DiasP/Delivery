@@ -26,7 +26,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'anuncios': module = await import('./dashboard-anuncios.js'); break;
                 case 'cupom': module = await import('./dashboard-cupom.js'); break;
                 // =========================================================================
-                //  ATUALIZAÇÃO APLICADA AQUI: Adicionando o case para "ofertas"
+                //  INÍCIO DA ATUALIZAÇÃO: Carregando os dois módulos de cupom
+                // =========================================================================
+                case 'cupons-promocionais': 
+                    module = await import('./dashboard-cupom.js'); 
+                    // Chama a função específica para os cupons promocionais
+                    if (module && typeof module.initPromocionais === 'function') {
+                        await module.initPromocionais();
+                        loadedModules.add(sectionId);
+                    }
+                    return; // Retorna para evitar a chamada do `module.init()` padrão
+                // =========================================================================
+                //  FIM DA ATUALIZAÇÃO
                 // =========================================================================
                 case 'ofertas': module = await import('./dashboard-ofertas.js'); break;
                 case 'entrega': module = await import('./dashboard-entrega.js'); break;
@@ -35,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'motoboy': module = await import('./dashboard-motoboy.js'); break;
                 default: console.warn(`Nenhum módulo para a seção: ${sectionId}`); return;
             }
+            // A chamada padrão para 'init' continua funcionando para as outras seções
             if (module && typeof module.init === 'function') {
                 await module.init(); 
                 loadedModules.add(sectionId);

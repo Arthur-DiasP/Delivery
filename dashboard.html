@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Painel de Administração da Pizzaria Moraes.">
-    <title>Dashboard - Pizzaria Moraes</title>
+    <title>Dashboard - La Pizza Moraes</title>
     
     <!-- Ícone e Estilos -->
     <link rel="icon" href="img/desenho-pizza.png" type="image/png">
@@ -31,7 +31,7 @@
             <div class="sidebar-header">
                 <img src="img/Logo.png" alt="Logo Pizzaria Moraes" class="sidebar-logo">
                 <h3>
-                    <span class="logo-pizzaria">Pizzaria</span> <span class="logo-moraes">Moraes</span>
+                    <span class="logo-pizzaria">La Pizza</span> <span class="logo-moraes">Moraes</span>
                 </h3>
             </div>
             <nav class="sidebar-nav">
@@ -40,7 +40,8 @@
                     <li><a href="#" class="nav-link" data-target="cardapio"><i class="material-icons">restaurant_menu</i><span>Cardápio</span></a></li>
                     <li><a href="#" class="nav-link" data-target="personalizacoes"><i class="material-icons">tune</i><span>Personalizações</span></a></li>
                     <li><a href="#" class="nav-link" data-target="anuncios"><i class="material-icons">campaign</i><span>Anúncios</span></a></li>
-                    <li><a href="#" class="nav-link" data-target="cupom"><i class="material-icons">card_giftcard</i><span>Cupom Mágico</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="cupom"><i class="material-icons">celebration</i><span>Cupom Mágico</span></a></li>
+                    <li><a href="#" class="nav-link" data-target="cupons-promocionais"><i class="material-icons">sell</i><span>Cupons Promocionais</span></a></li>
                     <li><a href="#" class="nav-link" data-target="ofertas"><i class="material-icons">local_offer</i><span>Ofertas</span></a></li>
                     <li><a href="#" class="nav-link" data-target="entrega"><i class="material-icons">local_shipping</i><span>Entrega</span></a></li>
                     <li><a href="#" class="nav-link" data-target="calendario"><i class="material-icons">calendar_today</i><span>Calendário</span></a></li>
@@ -127,6 +128,63 @@
                         <form id="cupom-campaign-form"><input type="hidden" id="campaign-id"><div class="form-group"><label for="campaign-name">Nome da Campanha</label><input type="text" id="campaign-name" placeholder="Ex: Jogo da Memória Premiado" required></div><div class="form-group"><label for="campaign-description">Descrição (para o cliente)</label><input type="text" id="campaign-description" placeholder="Ex: Encontre os pares e ganhe um super desconto!" required></div><div class="form-group"><label for="campaign-discount">Desconto do Cupom (%)</label><input type="number" id="campaign-discount" min="1" max="100" placeholder="15" required></div><div class="address-row"><div class="form-group"><label for="campaign-startDate">Data de Início</label><input type="date" id="campaign-startDate" required></div><div class="form-group"><label for="campaign-endDate">Data de Fim</label><input type="date" id="campaign-endDate" required></div></div><div class="address-row"><div class="form-group"><label for="campaign-attempts">Tentativas por Usuário</label><input type="number" id="campaign-attempts" min="1" value="1" required></div><div class="form-group"><label for="campaign-chances">Chances por Tentativa</label><input type="number" id="campaign-chances" min="2" value="18" required></div></div><div class="form-group"><label for="campaign-status">Status da Campanha</label><select id="campaign-status" required><option value="true" selected>Ativa</option><option value="false">Inativa</option></select></div><div class="form-actions"><button type="submit" class="btn btn-primary">Salvar Campanha</button><button type="button" id="clear-campaign-form-btn" class="btn btn-secondary">Cancelar</button></div></form>
                     </div>
                     <div class="product-list-container"><div class="list-header"><h2>Minhas Campanhas</h2></div><div class="table-wrapper"><table class="product-table"><thead><tr><th>Campanha</th><th>Período</th><th>Regras</th><th>Status</th><th>Ações</th></tr></thead><tbody id="campaigns-table-body"></tbody></table></div></div>
+                </div>
+            </section>
+
+            <!-- ====== Nova Seção: Cupons Promocionais ====== -->
+            <section id="section-cupons-promocionais" class="content-section">
+                <div class="cardapio-management-grid">
+                    <div class="product-form-container card">
+                        <h2 id="promo-cupom-form-title">Criar Cupom Promocional</h2>
+                        <form id="promo-cupom-form">
+                            <input type="hidden" id="promo-cupom-id">
+                            <div class="form-group">
+                                <label for="promo-cupom-code">Código do Cupom</label>
+                                <input type="text" id="promo-cupom-code" placeholder="Ex: PIZZA10" required>
+                                <small class="form-hint">Apenas letras e números. Será convertido para maiúsculas.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="promo-cupom-discount">Desconto (%)</label>
+                                <input type="number" id="promo-cupom-discount" min="1" max="100" placeholder="10" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="promo-cupom-expiration">Data de Validade</label>
+                                <input type="date" id="promo-cupom-expiration" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="promo-cupom-status">Status do Cupom</label>
+                                <select id="promo-cupom-status" required>
+                                    <option value="true" selected>Ativo</option>
+                                    <option value="false">Inativo</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">Salvar Cupom</button>
+                                <button type="button" id="clear-promo-cupom-form-btn" class="btn btn-secondary">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="product-list-container">
+                        <div class="list-header">
+                            <h2>Meus Cupons Promocionais</h2>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="product-table">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Desconto</th>
+                                        <th>Validade</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="promo-cupons-table-body">
+                                    <!-- Linhas serão inseridas aqui pelo JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </section>
 

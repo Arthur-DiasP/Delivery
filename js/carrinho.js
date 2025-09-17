@@ -2,13 +2,12 @@
 
 import { updateCartBadge } from './main.js';
 import { firestore } from './firebase-config.js';
-import { doc, getDoc, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { doc, getDoc, updateDoc, deleteField, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- SELETORES DO DOM ---
     const cartItemsContainer = document.getElementById('cart-items');
-    // ... (resto dos seletores continua igual)
     const subtotalEl = document.getElementById('subtotal');
     const deliveryFeeEl = document.getElementById('delivery-fee');
     const grandTotalEl = document.getElementById('grand-total');
@@ -19,8 +18,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const bairroInput = document.getElementById('bairro-input');
     const complementoInput = document.getElementById('complemento-input');
     const saveAddressCheckbox = document.getElementById('save-address-checkbox');
+    
+    // Seletores para a funcionalidade de cupom promocional
+    const couponInput = document.getElementById('coupon-code-input');
+    const applyCouponBtn = document.getElementById('apply-coupon-btn');
+    const couponFeedbackEl = document.getElementById('coupon-feedback');
+    const appliedCouponRow = document.getElementById('applied-coupon-row');
+    const couponCodeDisplay = document.getElementById('coupon-code-display');
+    const discountAmountEl = document.getElementById('discount-amount');
+    const removeCouponBtn = document.getElementById('remove-coupon-btn');
 
-    // ... (resto do seu código continua igual até a função renderCart)
+    // --- FUNÇÕES AUXILIARES ---
     const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
     const validateCheckoutButton = () => {
@@ -80,8 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-
-    // ***** FUNÇÃO MODIFICADA ABAIXO *****
     const renderCart = () => {
         const cart = JSON.parse(localStorage.getItem('pizzariaCart')) || {};
         const activeOferta = JSON.parse(sessionStorage.getItem('activeOferta'));
@@ -112,17 +118,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (Object.keys(cart).length === 0) {
             sessionStorage.removeItem('activeOferta');
             
-            // ***** INÍCIO DA MODIFICAÇÃO *****
-            // Aplica estilos de centralização ao contêiner PAI
             cartItemsContainer.style.display = 'flex';
             cartItemsContainer.style.justifyContent = 'center';
             cartItemsContainer.style.alignItems = 'center';
             cartItemsContainer.style.minHeight = '250px';
-            // ***** FIM DA MODIFICAÇÃO *****
 
             cartItemsContainer.innerHTML = `
                 <div class="empty-cart-message-container" style="display: flex; flex-direction: column; align-items: center; gap: 16px; color: #555;">
-            
                     <p style="font-size: 1.1rem; margin-bottom: 10px;">Seu carrinho está vazio.</p>
                     <div class="empty-cart-actions">
                          <a href="cardapio.html" class="btn btn-primary">Voltar ao Cardápio</a>
@@ -130,13 +132,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         } else {
-            // ***** INÍCIO DA MODIFICAÇÃO *****
-            // Remove os estilos de centralização para listar os itens normalmente
             cartItemsContainer.style.display = '';
             cartItemsContainer.style.justifyContent = '';
             cartItemsContainer.style.alignItems = '';
             cartItemsContainer.style.minHeight = '';
-            // ***** FIM DA MODIFICAÇÃO *****
 
             for (const id in cart) {
                 const item = cart[id];
@@ -171,28 +170,44 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCartBadge();
         validateCheckoutButton();
     };
-    // ***** FIM DA FUNÇÃO MODIFICADA *****
 
-
-    // ... (O resto do seu código a partir daqui continua exatamente igual)
     const updateSummary = () => {
         let subtotal;
         const activeOferta = JSON.parse(sessionStorage.getItem('activeOferta'));
+        const appliedCoupon = JSON.parse(sessionStorage.getItem('appliedCoupon'));
 
         if (activeOferta) {
             subtotal = activeOferta.precoFinal;
+            couponInput.disabled = true;
+            applyCouponBtn.disabled = true;
+            couponInput.placeholder = "Oferta já aplicada";
+            if (appliedCoupon) removeCoupon();
         } else {
             const cart = JSON.parse(localStorage.getItem('pizzariaCart')) || {};
             subtotal = Object.values(cart).reduce((acc, item) => acc + (item.preco * item.quantidade), 0);
+            couponInput.disabled = false;
+            applyCouponBtn.disabled = false;
+            couponInput.placeholder = "Possui um cupom?";
+        }
+
+        let discountAmount = 0;
+        if (appliedCoupon && subtotal > 0 && !activeOferta) {
+            discountAmount = subtotal * (appliedCoupon.desconto / 100);
+            appliedCouponRow.style.display = 'flex';
+            couponCodeDisplay.textContent = appliedCoupon.codigo;
+            discountAmountEl.textContent = `- ${formatCurrency(discountAmount)}`;
+        } else {
+            appliedCouponRow.style.display = 'none';
+            if (subtotal === 0) sessionStorage.removeItem('appliedCoupon');
         }
 
         const serviceFee = 1.00; 
         const deliveryFee = 0.00;
-        const grandTotal = subtotal + serviceFee + deliveryFee;
+        const grandTotal = subtotal - discountAmount + serviceFee + deliveryFee;
 
         subtotalEl.textContent = formatCurrency(subtotal);
         deliveryFeeEl.textContent = formatCurrency(deliveryFee);
-        grandTotalEl.textContent = formatCurrency(grandTotal);
+        grandTotalEl.textContent = formatCurrency(grandTotal > 0 ? grandTotal : 0);
     };
     
     function removeOferta() {
@@ -210,6 +225,66 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.reload(); 
         }
     }
+
+    const applyCoupon = async () => {
+        const code = couponInput.value.trim(); // Não precisa mais do toUpperCase() aqui
+        if (!code) {
+            couponFeedbackEl.textContent = 'Por favor, insira um código.';
+            couponFeedbackEl.className = 'coupon-feedback-message error';
+            return;
+        }
+
+        applyCouponBtn.disabled = true;
+        applyCouponBtn.textContent = '...';
+        couponFeedbackEl.textContent = '';
+        couponFeedbackEl.className = 'coupon-feedback-message';
+
+        try {
+            const q = query(collection(firestore, "cupons_promocionais"), where("codigo", "==", code));
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
+                couponFeedbackEl.textContent = 'Cupom inválido ou não encontrado.';
+                couponFeedbackEl.className = 'coupon-feedback-message error';
+                sessionStorage.removeItem('appliedCoupon');
+                return;
+            }
+
+            const couponDoc = querySnapshot.docs[0];
+            const couponData = { id: couponDoc.id, ...couponDoc.data() };
+            const today = new Date().toISOString().split('T')[0];
+
+            if (!couponData.ativa) {
+                couponFeedbackEl.textContent = 'Este cupom não está mais ativo.';
+                couponFeedbackEl.className = 'coupon-feedback-message error';
+                sessionStorage.removeItem('appliedCoupon');
+            } else if (couponData.dataValidade < today) {
+                couponFeedbackEl.textContent = 'Este cupom expirou.';
+                couponFeedbackEl.className = 'coupon-feedback-message error';
+                sessionStorage.removeItem('appliedCoupon');
+            } else {
+                sessionStorage.setItem('appliedCoupon', JSON.stringify(couponData));
+                couponFeedbackEl.textContent = `Cupom de ${couponData.desconto}% aplicado com sucesso!`;
+                couponFeedbackEl.className = 'coupon-feedback-message success';
+                couponInput.value = '';
+            }
+        } catch (error) {
+            console.error("Erro ao aplicar cupom:", error);
+            couponFeedbackEl.textContent = 'Erro ao verificar o cupom. Tente novamente.';
+            couponFeedbackEl.className = 'coupon-feedback-message error';
+        } finally {
+            applyCouponBtn.disabled = false;
+            applyCouponBtn.textContent = 'Aplicar';
+            updateSummary();
+        }
+    };
+
+    const removeCoupon = () => {
+        sessionStorage.removeItem('appliedCoupon');
+        couponFeedbackEl.textContent = '';
+        couponFeedbackEl.className = 'coupon-feedback-message';
+        updateSummary();
+    };
 
     const updateItemQuantity = (productId, change) => {
         clearOfertaIfCartChanges();
@@ -235,6 +310,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- EVENT LISTENERS ---
+    applyCouponBtn.addEventListener('click', applyCoupon);
+    removeCouponBtn.addEventListener('click', removeCoupon);
+
+    // =========================================================================
+    //  INÍCIO DA ATUALIZAÇÃO: Converte o texto do cupom para maiúsculas
+    // =========================================================================
+    couponInput.addEventListener('input', (e) => {
+        e.target.value = e.target.value.toUpperCase();
+    });
+    // =========================================================================
+    //  FIM DA ATUALIZAÇÃO
+    // =========================================================================
+
     cartItemsContainer.addEventListener('click', (e) => {
         const itemCard = e.target.closest('.cart-item-card');
         if (!itemCard) return;

@@ -7,7 +7,7 @@
     <meta name="description" content="Redefina sua senha na Pizzaria Moraes.">
     
     <!-- Título da Página -->
-    <title>Redefinir Senha - Pizzaria Moraes</title>
+    <title>Redefinir Senha - La Pizza Moraes</title>
 
     <!-- Ícone da Página (Favicon) -->
     <link rel="icon" href="img/desenho-pizza.png" type="image/png">
@@ -26,15 +26,37 @@
     <main class="login-main full-page-form">
         <div class="login-container">
             <h1 id="main-title">Redefinir Senha</h1>
-            <p id="form-subtitle" class="form-subtitle">Para começar, digite seu e-mail ou telefone.</p>
+            <p id="form-subtitle" class="form-subtitle">Escolha como você quer recuperar sua conta.</p>
             
-            <!-- ETAPA 1: Formulário para solicitar e-mail ou telefone -->
+            <!-- ETAPA 1: Formulário para solicitar e-mail ou CPF -->
             <form id="requestIdentifierForm" novalidate>
-                <div class="form-group">
-                    <label for="identifier">Email ou Telefone</label>
-                    <!-- ATUALIZAÇÃO APLICADA AQUI -->
-                    <input type="text" id="identifier" name="identifier" placeholder="Email ou Telefone (+55 xx xxxxx-xxxx)" required>
+                
+                <!-- INÍCIO DA ATUALIZAÇÃO: Opções de escolha alteradas para CPF -->
+                <div class="form-group recovery-options">
+                    <input type="radio" id="methodEmail" name="recoveryMethod" value="email" checked>
+                    <label for="methodEmail">E-mail</label>
+                    
+                    <input type="radio" id="methodCPF" name="recoveryMethod" value="cpf">
+                    <label for="methodCPF">CPF</label>
                 </div>
+
+                <!-- Container para o input de E-mail -->
+                <div id="email-input-container">
+                    <div class="form-group">
+                        <label for="email">Seu E-mail</label>
+                        <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" required>
+                    </div>
+                </div>
+                
+                <!-- Container para o input de CPF (inicialmente oculto) -->
+                <div id="cpf-input-container" style="display: none;">
+                    <div class="form-group">
+                        <label for="cpf">Seu CPF</label>
+                        <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" required>
+                    </div>
+                </div>
+                <!-- FIM DA ATUALIZAÇÃO -->
+
                 <p id="request-error-message" class="error-message" style="display: none;"></p>
                 <button type="submit" class="btn btn-primary">Verificar</button>
             </form>

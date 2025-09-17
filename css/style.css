@@ -163,7 +163,7 @@ input, button, select, textarea {
 /* ==================================================================== */
 .bottom-nav {
     position: fixed;
-    bottom: 2rem;
+    bottom: 3rem;
     left: 50%;
     transform: translateX(-50%);
     width: calc(100% - 2rem);
@@ -238,18 +238,46 @@ input, button, select, textarea {
 @keyframes pulsate { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 
 
-/* --- Login e Cadastro --- */
+/* ==================================================================== */
+/*  Ajustes na Página de Login (Mantido)                                */
+/* ==================================================================== */
 .login-page { display: flex; flex-direction: column; height: 100vh; }
-.login-header { height: 40vh; background-color: var(--primary-color); display: flex; justify-content: center; align-items: center; }
+
+.login-header {
+    height: 40vh;
+    background-color: var(--primary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 3rem;
+}
+
 .login-header img { max-width: 200px; max-height: 80%; }
 .login-main { background-color: #f4f4f8; height: 60vh; position: relative; }
-.login-container { background-color: var(--surface-color); padding: 2rem; border-radius: 16px; box-shadow: var(--shadow); width: 90%; max-width: 400px; position: absolute; top: -50px; left: 50%; transform: translateX(-50%); }
-.login-container h1 { text-align: center; margin-bottom: 1.5rem; }
+
+.login-container {
+    background-color: var(--surface-color);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    width: 90%;
+    max-width: 400px;
+    position: absolute;
+    top: -80px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.login-container h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
 .form-subtitle { text-align: center; color: var(--text-muted-color); margin-top: -1rem; margin-bottom: 1.5rem; }
 
-/* ========================================================================= */
-/*  Espaçamento para os links de formulário (Mantido)                        */
-/* ========================================================================= */
+
+/* --- Espaçamento para os links de formulário --- */
 .form-link {
     text-align: center;
     font-size: 0.9rem;
@@ -258,6 +286,39 @@ input, button, select, textarea {
 
 .form-link + .form-link {
     margin-top: 0.75rem;
+}
+
+/* ========================================================================= */
+/*  Estilos para as opções de recuperação de senha (Mantido)                 */
+/* ========================================================================= */
+.recovery-options {
+    display: flex;
+    background-color: var(--background-color);
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 1.5rem;
+}
+
+.recovery-options input[type="radio"] {
+    display: none;
+}
+
+.recovery-options label {
+    flex: 1;
+    text-align: center;
+    padding: 0.6rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    margin: 0;
+}
+
+.recovery-options input[type="radio"]:checked + label {
+    background-color: var(--surface-color);
+    color: var(--accent-color);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 /* --- Cardápio --- */
@@ -389,7 +450,7 @@ input, button, select, textarea {
 }
 
 /* ==================================================================== */
-/*  INÍCIO DA ATUALIZAÇÃO: Redesenho do Modal de Personalização         */
+/*  Redesenho do Modal de Personalização (Mantido)                      */
 /* ==================================================================== */
 
 .customization-modal-overlay { align-items: center; padding: 1rem; }
@@ -404,7 +465,7 @@ input, button, select, textarea {
     box-shadow: 0 10px 40px rgba(0,0,0,0.2);
     transform: scale(0.9);
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: relative; /* Adicionado para o botão fechar */
+    position: relative;
 }
 .customization-modal-overlay.visible .customization-modal-content { transform: scale(1); }
 
@@ -459,18 +520,18 @@ input, button, select, textarea {
     margin-top: 0;
     display: flex;
     align-items: center;
-    gap: 0.75rem; /* Reduzido o espaço entre os elementos */
-    justify-content: flex-start; /* Alinha tudo à esquerda */
+    gap: 0.75rem;
+    justify-content: flex-start;
 }
 
 #modal-add-to-cart-btn {
-    flex-grow: 0; /* Impede o botão de esticar */
-    width: auto; /* Anula o 'width: 100%' da classe .btn-block */
-    padding: 0.8rem 1.2rem; /* Acolchoamento ligeiramente reduzido para um botão mais compacto */
-    font-size: 1rem; /* Tamanho da fonte normalizado */
-    white-space: nowrap; /* Garante que o texto não quebre a linha */
-    display: flex; /* Mantém o display flex para o span interno */
-    gap: 0.5rem; /* Adiciona espaço entre "Adicionar" e o preço */
+    flex-grow: 0;
+    width: auto;
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+    white-space: nowrap;
+    display: flex;
+    gap: 0.5rem;
 }
 
 #modal-final-price { font-weight: 700; }
@@ -478,7 +539,7 @@ input, button, select, textarea {
 .modal-footer .quantity-selector {
     display: flex;
     align-items: center;
-    gap: 0.75rem; /* Espaçamento entre os botões +/- e o número */
+    gap: 0.75rem;
 }
 
 .modal-footer .quantity-selector .quantity-btn {
@@ -489,9 +550,6 @@ input, button, select, textarea {
 }
 .modal-footer .quantity-selector .quantity-btn:hover { background-color: #e0e0e0; }
 .modal-footer .quantity-selector .quantity-btn:active { transform: scale(0.95); }
-/* ==================================================================== */
-/*  FIM DA ATUALIZAÇÃO                                                  */
-/* ==================================================================== */
 
 
 /* Modais de Pagamento e Confirmação */
@@ -631,6 +689,67 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
 .delivery-message { font-size: 2.5rem; font-weight: 700; text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3); animation: fadeInScaleUp 1s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
 
 @keyframes fadeInScaleUp { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
+.payment-error-toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-150%);
+    width: 90%;
+    max-width: 420px;
+    background-color: var(--accent-color);
+    color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    z-index: 10002;
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease, visibility 0s 0.4s;
+}
+
+.payment-error-toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    visibility: visible;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+}
+
+.payment-error-icon {
+    font-size: 2rem;
+    margin-right: 1rem;
+}
+
+.payment-error-content {
+    flex-grow: 1;
+}
+
+.payment-error-content h4 {
+    margin: 0 0 0.25rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.payment-error-content p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+.payment-error-close {
+    background: none;
+    border: none;
+    color: #fff;
+    opacity: 0.7;
+    font-size: 1.8rem;
+    font-weight: 300;
+    cursor: pointer;
+    padding: 0 0.5rem;
+    margin-left: 1rem;
+}
 
 /* ============================================= */
 /*   9. ESTILOS HISTÓRICO DE PEDIDOS (PERFIL)    */
@@ -874,8 +993,7 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
 /* ============================================= */
 .finalize-order-button-container {
     position: fixed;
-    /* ATUALIZAÇÃO: Posição recalculada para ficar acima do novo navbar */
-    bottom: calc(2rem + var(--nav-height) + 0.5rem);
+    bottom: calc(3rem + var(--nav-height) + 0.25rem);
     left: 0;
     width: 100%;
     padding: 1rem;
@@ -893,8 +1011,7 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
 /* ============================================= */
 .add-to-cart-toast {
     position: fixed;
-    /* ATUALIZAÇÃO: Posição recalculada para ficar acima do novo navbar */
-    bottom: calc(2rem + var(--nav-height) + 1rem);
+    bottom: calc(3rem + var(--nav-height) + 1rem);
     left: 50%;
     transform: translateX(-50%) translateY(200%);
     background-color: var(--secondary-color);
@@ -969,6 +1086,107 @@ input[type="radio"]:checked + .payment-option-card .material-icons { color: var(
 .oferta-info-box h4 { margin: 0 0 0.25rem; color: #f57f17; }
 .oferta-info-box p { margin: 0; font-size: 0.9rem; color: var(--text-muted-color); }
 #remove-oferta-btn .material-icons { font-size: 1.8rem; }
+
+/* ============================================= */
+/*  27. CAMPO DE CUPOM (CARRINHO)                */
+/* ============================================= */
+.coupon-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding-left: 0.75rem;
+    margin-bottom: 0.5rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.coupon-input-group:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 184, 0, 0.25);
+}
+
+.coupon-input-group::before {
+    font-family: 'Material Icons';
+    content: '\e54e'; /* local_offer */
+    color: var(--text-muted-color);
+    font-size: 1.5rem;
+}
+
+.coupon-input-group input {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    padding: 0.75rem;
+    font-size: 1rem;
+    outline: none;
+}
+
+.coupon-input-group .btn {
+    border-radius: 0 6px 6px 0;
+    margin: -1px -1px -1px 0; /* Sobrepõe a borda do container */
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.coupon-feedback-message {
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: none; /* Oculto por padrão */
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.coupon-feedback-message::before {
+    font-family: 'Material Icons';
+    font-size: 1.25rem;
+}
+
+.coupon-feedback-message.success {
+    display: flex;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+.coupon-feedback-message.success::before {
+    content: 'check_circle';
+}
+
+.coupon-feedback-message.error {
+    display: flex;
+    background-color: #ffebee;
+    color: var(--accent-color);
+}
+.coupon-feedback-message.error::before {
+    content: 'error';
+}
+
+.total-line.discount {
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.total-line.discount span:first-child {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.remove-coupon-btn {
+    background: none;
+    border: none;
+    color: var(--accent-color);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+}
 
 /* ============================================= */
 /*       RESPONSIVIDADE                      */

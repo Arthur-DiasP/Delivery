@@ -7,7 +7,7 @@
     <meta name="description" content="Finalize seu pedido na Pizzaria Moraes escolhendo a forma de pagamento.">
     
     <!-- Título da Página -->
-    <title>Pagamento - Pizzaria Moraes</title>
+    <title>Pagamento - La Pizza Moraes</title>
 
     <!-- Ícone e Estilos -->
     <link rel="icon" href="img/desenho-pizza.png" type="image/png">
@@ -122,18 +122,12 @@
         </div>
     </div>
     
-    <!-- ============================================= -->
-    <!--  NOVO MODAL DE CONFIRMAÇÃO FINAL (ATRAENTE)   -->
-    <!-- ============================================= -->
+    <!-- MODAL DE CONFIRMAÇÃO FINAL -->
     <div class="payment-modal-overlay" id="confirmation-overlay">
         <div class="confirmation-modal-content">
-            <!-- Header com o ícone animado -->
             <div class="confirmation-header">
-                <div class="confirmation-icon">
-                    <!-- O checkmark será criado com CSS -->
-                </div>
+                <div class="confirmation-icon"></div>
             </div>
-            <!-- Corpo com a mensagem -->
             <div class="confirmation-body">
                 <h2>Pedido Recebido!</h2>
                 <p>Uhuul! Se o seu pagamento for concluído, você receberá uma notificação na página do seu perfil confirmando o seu pedido!</p>
@@ -141,6 +135,21 @@
             </div>
         </div>
     </div>
+
+    <!-- ============================================= -->
+    <!--  INÍCIO DA ATUALIZAÇÃO: Nova Notificação de Erro -->
+    <!-- ============================================= -->
+    <div class="payment-error-toast" id="payment-error-toast">
+        <i class="material-icons payment-error-icon">error_outline</i>
+        <div class="payment-error-content">
+            <h4 id="payment-error-title">Ocorreu um Erro</h4>
+            <p id="payment-error-message">Não foi possível processar o pagamento.</p>
+        </div>
+        <button class="payment-error-close" id="payment-error-close-btn">&times;</button>
+    </div>
+    <!-- ============================================= -->
+    <!--  FIM DA ATUALIZAÇÃO                          -->
+    <!-- ============================================= -->
     
     <!-- Scripts -->
     <script type="module" src="js/pagamentos.js"></script>

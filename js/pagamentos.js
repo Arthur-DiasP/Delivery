@@ -4,8 +4,6 @@ import { firestore } from './firebase-config.js';
 import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { updateCartBadge } from './main.js';
 
-// URL do seu servidor backend que se comunica com o Asaas
-// Alterado para um caminho relativo para funcionar em qualquer ambiente (local ou nuvem).
 const BACKEND_URL = '';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -33,8 +31,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeMoneyModalBtn = document.getElementById('close-money-modal-btn');
     const confirmationOverlay = document.getElementById('confirmation-overlay');
     const closeConfirmationBtn = document.getElementById('close-confirmation-btn');
+
+    // =========================================================================
+    //  INÍCIO DA ATUALIZAÇÃO: Seletores e lógica da notificação de erro
+    // =========================================================================
+    const errorToast = document.getElementById('payment-error-toast');
+    const errorTitle = document.getElementById('payment-error-title');
+    const errorMessage = document.getElementById('payment-error-message');
+    const errorCloseBtn = document.getElementById('payment-error-close-btn');
     
-    // --- Variáveis de Estado ---
+    let errorTimeout; // Variável para controlar o auto-fechamento
+    
+    function showPaymentError(title, message) {
+        // Limpa qualquer timeout anterior para evitar que feche rápido demais
+        clearTimeout(errorTimeout);
+
+        errorTitle.textContent = title;
+        errorMessage.textContent = message;
+        errorToast.classList.add('show');
+
+        // Define um novo timeout para esconder a notificação após 6 segundos
+        errorTimeout = setTimeout(() => {
+            errorToast.classList.remove('show');
+        }, 6000);
+    }
+
+    errorCloseBtn.addEventListener('click', () => {
+        clearTimeout(errorTimeout);
+        errorToast.classList.remove('show');
+    });
+    // =========================================================================
+    //  FIM DA ATUALIZAÇÃO
+    // =========================================================================
+    
     let orderTotal = 0;
     let orderAddress = {};
     let loggedInUser = {};
@@ -48,8 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const rawOrderAddress = sessionStorage.getItem('pizzariaOrderAddress');
 
         if (!rawLoggedInUser || !rawOrderTotal || !rawOrderAddress) {
-            alert("Sessão inválida. Por favor, refaça o pedido a partir do carrinho.");
-            window.location.href = 'carrinho.html';
+            showPaymentError('Sessão Inválida', 'Por favor, refaça o pedido a partir do carrinho.');
+            setTimeout(() => window.location.href = 'carrinho.html', 3000);
             return;
         }
 
@@ -58,8 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
         orderAddress = JSON.parse(rawOrderAddress);
 
         if (!loggedInUser.cpf || loggedInUser.cpf.replace(/\D/g, '').length !== 11) {
-            alert("Seu CPF não está preenchido ou é inválido. Por favor, atualize seu perfil antes de continuar.");
-            window.location.href = 'perfil.html';
+            showPaymentError('Perfil Incompleto', 'Seu CPF é inválido. Atualize seu perfil antes de continuar.');
+            setTimeout(() => window.location.href = 'perfil.html', 3000);
             return;
         }
 
@@ -106,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleMainConfirm() {
         const selectedMethodRadio = document.querySelector('input[name="payment-method"]:checked');
         if (!selectedMethodRadio) {
-            alert("Selecione uma forma de pagamento.");
+            showPaymentError('Atenção', 'Selecione uma forma de pagamento para continuar.');
             return;
         }
         const method = selectedMethodRadio.value.toUpperCase();
@@ -134,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const cardCvv = document.getElementById('card-cvv').value;
 
         if (!cardNumber || !cardName || !cardExpiry || !cardCvv) {
-            alert("Preencha todos os dados do cartão.");
+            showPaymentError('Dados Incompletos', 'Por favor, preencha todos os dados do cartão.');
             confirmCardPaymentBtn.disabled = false;
             confirmCardPaymentBtn.textContent = 'Pagar com Cartão';
             return;
@@ -142,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const [expiryMonth, expiryYearSuffix] = cardExpiry.split('/').map(s => s.trim());
         if (!expiryMonth || !expiryYearSuffix || expiryYearSuffix.length !== 2) {
-             alert("Formato de validade inválido. Use MM/AA.");
+             showPaymentError('Dados Inválidos', 'Formato de validade inválido. Use MM/AA.');
              confirmCardPaymentBtn.disabled = false;
              confirmCardPaymentBtn.textContent = 'Pagar com Cartão';
              return;
@@ -167,7 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     
         try {
-            // A chamada agora usa um caminho relativo
             const response = await fetch(`/api/create-payment`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -178,7 +206,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 console.error('Erro retornado pelo backend:', data);
                 const errorMsg = data.details && data.details[0] ? data.details[0].description : data.error;
-                alert(`Erro ao processar pagamento: ${errorMsg}`);
+                // ATUALIZAÇÃO: Substitui alert pela nova notificação
+                showPaymentError('Falha no Pagamento', `${errorMsg}. Por favor, verifique os dados e tente novamente.`);
                 return;
             }
     
@@ -192,20 +221,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     pixModalOverlay.classList.add('visible');
                 } else {
                     console.error("A resposta da API para o PIX não continha os dados do QR Code. Resposta recebida:", data);
-                    alert("Ocorreu um erro inesperado ao gerar o QR Code do PIX.");
+                    // ATUALIZAÇÃO: Substitui alert pela nova notificação
+                    showPaymentError('Falha na Geração do PIX', 'Não foi possível gerar o QR Code. Tente novamente em alguns instantes.');
                 }
             } else if (method === 'CREDIT_CARD' || method === 'DEBIT_CARD') {
                 if (data.status === 'CONFIRMED' || data.status === 'RECEIVED') {
-                    alert('Pagamento com cartão aprovado!');
                     finalizeOrder('Cartão de Crédito');
                 } else {
-                    alert(`O pagamento está sendo processado. Status: ${data.status}`);
+                    showPaymentError('Pagamento Pendente', `O pagamento está sendo processado (Status: ${data.status}).`);
                     finalizeOrder('Cartão (Pendente)');
                 }
             }
         } catch (error) {
             console.error("Erro de comunicação com o servidor:", error);
-            alert("Não foi possível conectar ao servidor de pagamentos.");
+            // ATUALIZAÇÃO: Substitui alert pela nova notificação
+            showPaymentError('Erro de Conexão', 'Não foi possível conectar ao servidor de pagamentos. Verifique sua rede.');
         }
     }
     
@@ -247,16 +277,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const cart = JSON.parse(localStorage.getItem('pizzariaCart')) || {};
             const newOrder = {
                 userId: loggedInUser.id,
-                // =========================================================================
-                //  CORREÇÃO APLICADA AQUI: Adicionando o telefone ao objeto do cliente
-                // =========================================================================
                 cliente: { 
                     nome: loggedInUser.nome, 
                     email: loggedInUser.email, 
                     cpf: loggedInUser.cpf,
-                    telefone: loggedInUser.telefone // <-- LINHA ADICIONADA
+                    telefone: loggedInUser.telefone
                 },
-                // =========================================================================
                 itens: cart,
                 total: orderTotal,
                 endereco: orderAddress,
@@ -275,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
             confirmationOverlay.classList.add('visible');
         } catch (error) {
             console.error("Erro ao finalizar o pedido:", error);
-            alert("Não foi possível registrar o pedido. Tente novamente.");
+            showPaymentError('Erro Crítico', 'Não foi possível registrar seu pedido no sistema. Por favor, contate o suporte.');
         }
     }
 

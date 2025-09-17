@@ -1,48 +1,56 @@
 // js/dashboard-cupom.js
 
 import { firestore } from './firebase-config.js';
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // --- SELETORES DO DOM ---
-const form = document.getElementById('cupom-campaign-form');
-const formTitle = document.getElementById('cupom-form-title');
-const campaignIdInput = document.getElementById('campaign-id');
-const clearFormBtn = document.getElementById('clear-campaign-form-btn');
-const tableBody = document.getElementById('campaigns-table-body');
+
+// Formulário e Tabela do Jogo (Cupom Mágico)
+const gameForm = document.getElementById('cupom-campaign-form');
+const gameFormTitle = document.getElementById('cupom-form-title');
+const gameCampaignIdInput = document.getElementById('campaign-id');
+const gameClearFormBtn = document.getElementById('clear-campaign-form-btn');
+const gameTableBody = document.getElementById('campaigns-table-body');
+
+// Seletores para Cupons Promocionais
+const promoForm = document.getElementById('promo-cupom-form');
+const promoFormTitle = document.getElementById('promo-cupom-form-title');
+const promoCampaignIdInput = document.getElementById('promo-cupom-id');
+const promoCodeInput = document.getElementById('promo-cupom-code');
+const promoClearFormBtn = document.getElementById('clear-promo-cupom-form-btn');
+const promoTableBody = document.getElementById('promo-cupons-table-body');
 
 // --- ESTADO LOCAL ---
-let allCampaigns = [];
+let allGameCampaigns = [];
+let allPromoCoupons = []; // Novo estado para cupons promocionais
 
-/**
- * Busca todas as campanhas do Firestore e renderiza na tabela.
- */
-const fetchAndRenderCampaigns = async () => {
-    tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Carregando campanhas...</td></tr>';
+// ========================================================
+//  LÓGICA PARA O JOGO "CUPOM MÁGICO" (EXISTENTE)
+// ========================================================
+
+const fetchAndRenderGameCampaigns = async () => {
+    gameTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Carregando campanhas...</td></tr>';
     try {
         const querySnapshot = await getDocs(collection(firestore, 'cupons'));
-        allCampaigns = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        allGameCampaigns = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         
-        // Ordena por data de início, da mais nova para a mais antiga
-        allCampaigns.sort((a, b) => new Date(b.dataInicio) - new Date(a.dataInicio));
+        allGameCampaigns.sort((a, b) => new Date(b.dataInicio) - new Date(a.dataInicio));
         
-        renderTable();
+        renderGameTable();
     } catch (error) {
         console.error("Erro ao buscar campanhas:", error);
-        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;" class="error-message">Falha ao carregar campanhas.</td></tr>';
+        gameTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;" class="error-message">Falha ao carregar campanhas.</td></tr>';
     }
 };
 
-/**
- * Renderiza os dados das campanhas na tabela.
- */
-const renderTable = () => {
-    tableBody.innerHTML = '';
-    if (allCampaigns.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Nenhuma campanha criada ainda.</td></tr>';
+const renderGameTable = () => {
+    gameTableBody.innerHTML = '';
+    if (allGameCampaigns.length === 0) {
+        gameTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Nenhuma campanha criada ainda.</td></tr>';
         return;
     }
 
-    allCampaigns.forEach(campaign => {
+    allGameCampaigns.forEach(campaign => {
         const tr = document.createElement('tr');
         tr.dataset.id = campaign.id;
 
@@ -70,30 +78,23 @@ const renderTable = () => {
                 </div>
             </td>
         `;
-        tableBody.appendChild(tr);
+        gameTableBody.appendChild(tr);
     });
 };
 
-/**
- * Limpa o formulário e reseta seu estado.
- */
-const resetForm = () => {
-    form.reset();
-    campaignIdInput.value = '';
-    formTitle.textContent = 'Criar Campanha de Cupom';
+const resetGameForm = () => {
+    gameForm.reset();
+    gameCampaignIdInput.value = '';
+    gameFormTitle.textContent = 'Criar Campanha de Cupom';
     document.getElementById('campaign-status').value = 'true';
 };
 
-/**
- * Preenche o formulário com dados de uma campanha para edição.
- * @param {string} id - O ID da campanha a ser editada.
- */
-const populateFormForEdit = (id) => {
-    const campaign = allCampaigns.find(c => c.id === id);
+const populateGameFormForEdit = (id) => {
+    const campaign = allGameCampaigns.find(c => c.id === id);
     if (!campaign) return;
 
-    campaignIdInput.value = id;
-    formTitle.textContent = 'Editar Campanha';
+    gameCampaignIdInput.value = id;
+    gameFormTitle.textContent = 'Editar Campanha';
     document.getElementById('campaign-name').value = campaign.nome;
     document.getElementById('campaign-description').value = campaign.descricao;
     document.getElementById('campaign-discount').value = campaign.desconto;
@@ -106,13 +107,86 @@ const populateFormForEdit = (id) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
+// ========================================================
+//  LÓGICA PARA CUPONS PROMOCIONAIS (NOVO)
+// ========================================================
+
+const fetchAndRenderPromocionais = async () => {
+    promoTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Carregando cupons...</td></tr>';
+    try {
+        const querySnapshot = await getDocs(collection(firestore, 'cupons_promocionais'));
+        allPromoCoupons = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        allPromoCoupons.sort((a, b) => new Date(b.dataValidade) - new Date(a.dataValidade)); // Mais novos primeiro
+        renderPromocionaisTable();
+    } catch (error) {
+        console.error("Erro ao buscar cupons promocionais:", error);
+        promoTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;" class="error-message">Falha ao carregar cupons.</td></tr>';
+    }
+};
+
+const renderPromocionaisTable = () => {
+    promoTableBody.innerHTML = '';
+    if (allPromoCoupons.length === 0) {
+        promoTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Nenhum cupom promocional criado.</td></tr>';
+        return;
+    }
+
+    allPromoCoupons.forEach(coupon => {
+        const tr = document.createElement('tr');
+        tr.dataset.id = coupon.id;
+
+        const expirationDate = new Date(coupon.dataValidade + 'T00:00:00').toLocaleDateString('pt-BR');
+        const statusClass = coupon.ativa ? 'status-concluído' : 'status-cancelado';
+        const statusText = coupon.ativa ? 'Ativo' : 'Inativo';
+
+        tr.innerHTML = `
+            <td><strong>${coupon.codigo}</strong></td>
+            <td>${coupon.desconto}%</td>
+            <td>${expirationDate}</td>
+            <td><span class="order-status ${statusClass}">${statusText}</span></td>
+            <td>
+                <div class="product-actions-admin">
+                    <button class="btn-icon edit-btn" title="Editar Cupom"><i class="material-icons">edit</i></button>
+                    <button class="btn-icon delete-btn" title="Excluir Cupom"><i class="material-icons">delete</i></button>
+                </div>
+            </td>
+        `;
+        promoTableBody.appendChild(tr);
+    });
+};
+
+const resetPromocionaisForm = () => {
+    promoForm.reset();
+    promoCampaignIdInput.value = '';
+    promoFormTitle.textContent = 'Criar Cupom Promocional';
+    document.getElementById('promo-cupom-status').value = 'true';
+};
+
+const populatePromocionaisFormForEdit = (id) => {
+    const coupon = allPromoCoupons.find(c => c.id === id);
+    if (!coupon) return;
+
+    promoCampaignIdInput.value = id;
+    promoFormTitle.textContent = 'Editar Cupom Promocional';
+    promoCodeInput.value = coupon.codigo;
+    document.getElementById('promo-cupom-discount').value = coupon.desconto;
+    document.getElementById('promo-cupom-expiration').value = coupon.dataValidade;
+    document.getElementById('promo-cupom-status').value = coupon.ativa.toString();
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+// ========================================================
+//  INICIALIZAÇÃO E EVENT LISTENERS
+// ========================================================
+
 /**
- * Função de inicialização do módulo.
+ * Função de inicialização para o módulo de "Cupom Mágico".
  */
 export function init() {
-    form.addEventListener('submit', async (e) => {
+    gameForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const id = campaignIdInput.value;
+        const id = gameCampaignIdInput.value;
 
         const campaignData = {
             nome: document.getElementById('campaign-name').value,
@@ -138,21 +212,21 @@ export function init() {
                 await addDoc(collection(firestore, 'cupons'), campaignData);
                 alert('Campanha criada com sucesso!');
             }
-            resetForm();
-            await fetchAndRenderCampaigns();
+            resetGameForm();
+            await fetchAndRenderGameCampaigns();
         } catch (error) {
             console.error("Erro ao salvar campanha:", error);
             alert("Ocorreu um erro ao salvar a campanha.");
         }
     });
 
-    tableBody.addEventListener('click', async (e) => {
+    gameTableBody.addEventListener('click', async (e) => {
         const row = e.target.closest('tr');
         if (!row) return;
         const id = row.dataset.id;
 
         if (e.target.closest('.edit-btn')) {
-            populateFormForEdit(id);
+            populateGameFormForEdit(id);
         }
 
         if (e.target.closest('.delete-btn')) {
@@ -160,7 +234,7 @@ export function init() {
                 try {
                     await deleteDoc(doc(firestore, 'cupons', id));
                     alert('Campanha excluída com sucesso.');
-                    await fetchAndRenderCampaigns();
+                    await fetchAndRenderGameCampaigns();
                 } catch (error) {
                     console.error("Erro ao excluir campanha:", error);
                     alert("Ocorreu um erro ao excluir a campanha.");
@@ -169,6 +243,73 @@ export function init() {
         }
     });
 
-    clearFormBtn.addEventListener('click', resetForm);
-    fetchAndRenderCampaigns();
+    gameClearFormBtn.addEventListener('click', resetGameForm);
+    fetchAndRenderGameCampaigns();
+}
+
+/**
+ * Função de inicialização para o módulo de "Cupons Promocionais".
+ */
+export function initPromocionais() {
+    promoCodeInput.addEventListener('input', (e) => {
+        e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    });
+
+    promoForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = promoCampaignIdInput.value;
+
+        const couponData = {
+            codigo: promoCodeInput.value,
+            desconto: parseInt(document.getElementById('promo-cupom-discount').value, 10),
+            dataValidade: document.getElementById('promo-cupom-expiration').value,
+            ativa: document.getElementById('promo-cupom-status').value === 'true',
+        };
+
+        if (!couponData.codigo || !couponData.desconto || !couponData.dataValidade) {
+            alert("Por favor, preencha todos os campos obrigatórios.");
+            return;
+        }
+
+        try {
+            if (id) {
+                await updateDoc(doc(firestore, 'cupons_promocionais', id), couponData);
+                alert('Cupom atualizado com sucesso!');
+            } else {
+                await addDoc(collection(firestore, 'cupons_promocionais'), couponData);
+                alert('Cupom criado com sucesso!');
+            }
+            resetPromocionaisForm();
+            await fetchAndRenderPromocionais();
+        } catch (error) {
+            console.error("Erro ao salvar cupom:", error);
+            alert("Ocorreu um erro ao salvar o cupom.");
+        }
+    });
+
+    promoTableBody.addEventListener('click', async (e) => {
+        const row = e.target.closest('tr');
+        if (!row) return;
+        const id = row.dataset.id;
+
+        if (e.target.closest('.edit-btn')) {
+            populatePromocionaisFormForEdit(id);
+        }
+
+        if (e.target.closest('.delete-btn')) {
+            if (confirm('Tem certeza que deseja excluir este cupom?')) {
+                try {
+                    await deleteDoc(doc(firestore, 'cupons_promocionais', id));
+                    alert('Cupom excluído com sucesso.');
+                    await fetchAndRenderPromocionais();
+                } catch (error) {
+                    console.error("Erro ao excluir cupom:", error);
+                    alert("Ocorreu um erro ao excluir o cupom.");
+                }
+            }
+        }
+    });
+
+    promoClearFormBtn.addEventListener('click', resetPromocionaisForm);
+    fetchAndRenderPromocionais();
 }

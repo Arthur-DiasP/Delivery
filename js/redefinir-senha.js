@@ -10,7 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const verifyDetailsForm = document.getElementById('verifyDetailsForm');
     const updatePasswordForm = document.getElementById('updatePasswordForm');
     const finalSuccessMessage = document.getElementById('final-success-message');
-    const identifierInput = document.getElementById('identifier');
+    
+    const emailInputContainer = document.getElementById('email-input-container');
+    const cpfInputContainer = document.getElementById('cpf-input-container');
+    const emailInput = document.getElementById('email');
+    const cpfInput = document.getElementById('cpf');
+    const recoveryMethodRadios = document.querySelectorAll('input[name="recoveryMethod"]');
 
     let resetState = {
         userId: null,
@@ -25,32 +30,52 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // =========================================================================
-    //  INÍCIO DA ATUALIZAÇÃO: Adiciona a mesma máscara de telefone aqui
-    // =========================================================================
-    identifierInput.addEventListener('input', (e) => {
-        const value = e.target.value;
-        if (!value.includes('@')) { // Aplica a máscara apenas se não for um e-mail
-            let digits = value.replace(/\D/g, '');
-            digits = digits.slice(0, 13);
-            digits = digits.replace(/^(\d{2})/, '+$1 ');
-            digits = digits.replace(/\+(\d{2})\s(\d{2})/, '+$1 ($2) ');
-            digits = digits.replace(/(\d{5})(\d)/, '$1-$2');
-            e.target.value = digits;
-        }
+    recoveryMethodRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (e.target.value === 'email') {
+                emailInputContainer.style.display = 'block';
+                cpfInputContainer.style.display = 'none';
+            } else { // Se o valor for 'cpf'
+                emailInputContainer.style.display = 'none';
+                cpfInputContainer.style.display = 'block';
+            }
+        });
     });
-    // =========================================================================
-    //  FIM DA ATUALIZAÇÃO
-    // =========================================================================
+
+    // Adiciona máscara de CPF
+    cpfInput.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\D/g, '');
+        value = value.slice(0, 11);
+        value = value.replace(/(\d{3})(\d)/, '$1.$2');
+        value = value.replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
+        value = value.replace(/(\d{3})\.(\d{3})\.(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+        e.target.value = value;
+    });
 
     requestIdentifierForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const submitButton = requestIdentifierForm.querySelector('button[type="submit"]');
-        const identifier = identifierInput.value.trim();
         document.getElementById('request-error-message').style.display = 'none';
 
+        const selectedMethod = document.querySelector('input[name="recoveryMethod"]:checked').value;
+        let identifier;
+        
+        // =========================================================================
+        //  INÍCIO DA CORREÇÃO: Usar o CPF com a máscara na busca
+        // =========================================================================
+        if (selectedMethod === 'email') {
+            identifier = emailInput.value.trim();
+        } else { // Se for CPF
+            // Pega o valor diretamente do campo, COM A MÁSCARA, para que a busca
+            // corresponda ao formato salvo no banco de dados.
+            identifier = cpfInput.value; // <-- CORREÇÃO APLICADA AQUI
+        }
+        // =========================================================================
+        //  FIM DA CORREÇÃO
+        // =========================================================================
+
         if (!identifier) {
-            showError('request', 'Por favor, insira seu e-mail ou telefone.');
+            showError('request', 'Por favor, preencha o campo.');
             return;
         }
 
@@ -61,10 +86,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const usersRef = collection(firestore, 'users');
             let q;
 
-            if (identifier.includes('@')) {
+            if (selectedMethod === 'email') {
                 q = query(usersRef, where("email", "==", identifier));
-            } else {
-                q = query(usersRef, where("telefone", "==", identifier));
+            } else { // Busca por CPF
+                q = query(usersRef, where("cpf", "==", identifier));
             }
 
             const querySnapshot = await getDocs(q);

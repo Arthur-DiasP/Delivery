@@ -103,20 +103,30 @@ if (loginForm) {
 const cadastroForm = document.getElementById('cadastroForm');
 if (cadastroForm) {
     // =========================================================================
-    //  INÍCIO DA ATUALIZAÇÃO: Nova máscara de telefone com código do país (+55)
+    //  INÍCIO DA ATUALIZAÇÃO: Máscara de telefone corrigida e inteligente
     // =========================================================================
-    const telInput = document.getElementById('telefone');
-    if (telInput) {
-        telInput.addEventListener('input', (e) => {
-            let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
-            value = value.slice(0, 13); // Limita a 13 dígitos: 2 (país) + 2 (DDD) + 9 (número)
+    const telefoneInput = document.getElementById('telefone');
+    if (telefoneInput) {
+        telefoneInput.addEventListener('input', (e) => {
+            let digits = e.target.value.replace(/\D/g, '');
 
-            // Aplica a máscara de forma progressiva
-            value = value.replace(/^(\d{2})/, '+$1 '); // +55
-            value = value.replace(/\+(\d{2})\s(\d{2})/, '+$1 ($2) '); // +55 (11)
-            value = value.replace(/(\d{5})(\d)/, '$1-$2'); // +55 (11) 9xxxx-xxxx
-            
-            e.target.value = value;
+            // Adiciona o "+55" automaticamente se o usuário começar a digitar o DDD
+            if (digits.length >= 2 && digits.substring(0, 2) !== '55') {
+                digits = '55' + digits;
+            }
+
+            digits = digits.slice(0, 13);
+
+            // Reconstrói a string formatada, permitindo apagar
+            if (digits.length <= 2) {
+                e.target.value = `+${digits}`;
+            } else if (digits.length <= 4) {
+                e.target.value = `+${digits.slice(0, 2)} (${digits.slice(2)}`;
+            } else if (digits.length <= 9) {
+                e.target.value = `+${digits.slice(0, 2)} (${digits.slice(2, 4)}) ${digits.slice(4)}`;
+            } else {
+                e.target.value = `+${digits.slice(0, 2)} (${digits.slice(2, 4)}) ${digits.slice(4, 9)}-${digits.slice(9)}`;
+            }
         });
     }
     // =========================================================================
@@ -153,18 +163,12 @@ if (cadastroForm) {
             showFormError(cadastroForm, 'Nome completo deve conter apenas letras e ter no mínimo 3 caracteres.');
             return;
         }
-
-        // =========================================================================
-        //  INÍCIO DA ATUALIZAÇÃO: Nova validação para o telefone
-        // =========================================================================
-        // O formato completo "+55 (11) 98888-7777" tem 19 caracteres
-        if (telefone.length < 19) {
-            showFormError(cadastroForm, 'Telefone inválido. Preencha o código do país, DDD e número completo.');
+        
+        // A validação de telefone agora verifica o número de dígitos puros
+        if (telefone.replace(/\D/g, '').length < 12) { // 55 + DDD + 9 dígitos = 13 dígitos
+            showFormError(cadastroForm, 'Telefone inválido. Preencha o código do país (55), DDD e número completo.');
             return;
         }
-        // =========================================================================
-        //  FIM DA ATUALIZAÇÃO
-        // =========================================================================
 
         if (cpf.replace(/\D/g, '').length !== 11) {
             showFormError(cadastroForm, 'CPF inválido. Deve conter exatamente 11 dígitos.');

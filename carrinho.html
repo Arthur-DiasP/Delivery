@@ -7,7 +7,7 @@
     <meta name="description" content="Revise seu pedido na Pizzaria Moraes, informe seu endereço e prossiga para o pagamento.">
     
     <!-- Título da Página -->
-    <title>Meu Carrinho - Pizzaria Moraes</title>
+    <title>Meu Carrinho - La Pizza Moraes</title>
 
     <!-- Ícone da Página (Favicon) -->
     <link rel="icon" href="img/desenho-pizza.png" type="image/png">
@@ -37,11 +37,7 @@
         <!-- Container onde os itens do carrinho serão listados -->
         <!-- O conteúdo aqui é gerado dinamicamente pelo arquivo js/carrinho.js -->
         <div id="cart-items" class="cart-items-container">
-            <!-- Exemplo de como um item será renderizado (gerado pelo JS):
-            <div class="cart-item">
-                ... conteúdo do item ...
-            </div>
-            -->
+            <!-- Itens do carrinho são injetados aqui pelo JavaScript -->
         </div>
 
         <!-- Seção de Endereço de Entrega -->
@@ -96,10 +92,25 @@
 
         <!-- Seção de resumo do pedido -->
         <div class="cart-summary card">
+            <!-- Campo de Cupom Promocional -->
+            <div class="coupon-input-group">
+                <input type="text" id="coupon-code-input" placeholder="Possui um cupom?">
+                <button id="apply-coupon-btn" class="btn btn-secondary">Aplicar</button>
+            </div>
+            <p id="coupon-feedback" class="coupon-feedback-message"></p>
+            
+            <!-- Linhas de valores -->
             <div class="total-line">
                 <span>Subtotal dos Itens</span>
                 <span id="subtotal">R$ 0,00</span>
             </div>
+
+            <!-- Linha para exibir o desconto (oculta por padrão) -->
+            <div class="total-line discount" id="applied-coupon-row" style="display: none;">
+                <span>Desconto (<span id="coupon-code-display"></span>) <button id="remove-coupon-btn" class="remove-coupon-btn">Remover</button></span>
+                <span id="discount-amount">- R$ 0,00</span>
+            </div>
+
             <div class="total-line">
                 <span>Taxa de Serviço</span>
                 <span id="service-fee">R$ 1,00</span>
